@@ -4,7 +4,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import { getProducts } from '../api/productsApi';
 import { Product } from '../types/product';
-import ProductCard from '../components/productCard';
+import ProductCard from '../components/ProductCard';
 
 type ProductsScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Products'>;
 
@@ -26,7 +26,7 @@ export default function ProductsScreen({ navigation }: { navigation: ProductsScr
         numColumns={2}
         columnWrapperStyle={styles.row}
         renderItem={({ item }) => (
-          <ProductCard product={item}/>
+          <ProductCard product={item} onPress={() => { navigation.navigate('ProductDetails', { productId: item.id }) }} />
         )}
       />
     </View>

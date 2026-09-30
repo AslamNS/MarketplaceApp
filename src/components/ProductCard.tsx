@@ -1,13 +1,18 @@
-import {View, Text, StyleSheet, Image } from "react-native"
+import {View, Text, StyleSheet, Pressable } from "react-native"
 import { Product } from "../types/product"
 
-export default function ProductCard({product}: {product: Product}){
+type Props={
+    product: Product,
+    onPress: () => void,
+}
+
+export default function ProductCard({product,onPress}: Props){
     return (
-        <View style={styles.container}>
+        <Pressable onPress={onPress} style={styles.container}>
             <Text>{product.title}</Text>
             <Text>{product.price}</Text>
             <Text>{product.description}</Text>
-        </View>
+        </Pressable>
     )
 }
 
@@ -18,7 +23,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         margin: 8,
         padding: 10,
-        backgroundColor: '#f9f9f9',
+        backgroundColor: 'red',
         borderRadius: 8,
         height: 200,
     },
