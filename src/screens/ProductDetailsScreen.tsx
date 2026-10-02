@@ -17,10 +17,10 @@ export default function ProductDetailsScreen({
 }) {
   const [product,setProduct] = useState<Product | null>(null);
   useEffect(()=>{
-    const productId = route.params?.productId;
+    const productId = route.params.productId;
     if(productId){
       getProductById(productId).then((data)=>{
-        setProduct(data || null);
+        setProduct(data);
       }).catch((error)=>{
         console.error(error);
       })
