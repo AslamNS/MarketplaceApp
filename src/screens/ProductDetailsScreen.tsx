@@ -1,9 +1,10 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, ActivityIndicator, Button } from 'react-native';
 import { RootStackParamList } from '../navigation/types';
 import { RouteProp } from '@react-navigation/native';
 import { getProductById } from '../api/productsApi';
 import { useEffect, useState } from 'react';
 import { Product } from '../types/product';
+import useCartStore from '../store/cartStore';
 
 type ProductDetailsRouteProp = RouteProp<
   RootStackParamList,
@@ -16,18 +17,48 @@ export default function ProductDetailsScreen({
   route: ProductDetailsRouteProp;
 }) {
   const [product,setProduct] = useState<Product | null>(null);
-  useEffect(()=>{
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  
+  const addToCart = useCartStore((state) => state.addToCart);
+  // useEffect(()=>{
+  //   setLoading(true)
+  //   setError(null)
+  //   const productId = route.params.productId;
+  //     getProductById(productId).then((data)=>{
+  //       setProduct(data); 
+  //       setLoading(false)
+  //     }).catch((error)=>{
+  //       setError('Failed to load product');
+  //     }).finally(()=>{
+  //       setLoading(false)
+  //     })
+  // },[route.params.productId])
+
+  useEffect(() => {
+  const loadData = async () => {
+    setLoading(true);
+    setError(null);
+
     const productId = route.params.productId;
-    if(productId){
-      getProductById(productId).then((data)=>{
-        setProduct(data);
-      }).catch((error)=>{
-        console.error(error);
-      })
+
+    try {
+      const data = await getProductById(productId);
+      setProduct(data);
+    } catch (error) {
+      setError('Failed to load product');
+    } finally {
+      setLoading(false);
     }
-  },[route.params?.productId])
+  };
+
+  loadData();
+}, [route.params.productId]);
   return (
+    
     <View style={styles.container}>
+      {loading ? <ActivityIndicator size="large" color="#0000ff" /> :(
+        <>
       <Image 
       source={{ uri: product?.thumbnail }}
       style={styles.image}
@@ -46,6 +77,11 @@ export default function ProductDetailsScreen({
       <Text style={styles.text}>Shipping Insurance: {product?.shippingInsurance}</Text>
       <Text style={styles.text}>{product?.isReturnable}</Text>
       <Text style={styles.text}>{product?.isAdultOnly}</Text>
+      
+      <Button title="Add to Cart" onPress={() => product && addToCart(product)} />
+      </>
+      )
+    }
     </View>
   );
 }
